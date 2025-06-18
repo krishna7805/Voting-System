@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cast Your Vote</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f1f5f9; /* slate-100 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 480px; /* max-w-md */
+            margin: auto; /* mx-auto */
+            background-color: #ffffff; /* bg-white */
+            padding: 32px; /* p-8 */
+            border-radius: 16px; /* rounded-2xl */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+        }
+        .text-center {
+            text-align: center;
+        }
+        .mb-8 { margin-bottom: 32px; } /* mb-8 */
+        .mb-6 { margin-bottom: 24px; } /* mb-6 */
+        .mb-2 { margin-bottom: 8px; } /* mb-2 */
+        .mt-2 { margin-top: 8px; } /* mt-2 */
+        .mt-4 { margin-top: 16px; } /* mt-4 */
+        .text-3xl { font-size: 30px; } /* text-3xl */
+        .text-2xl { font-size: 24px; } /* text-2xl */
+        .text-xl { font-size: 20px; } /* text-xl */
+        .text-lg { font-size: 18px; } /* text-lg */
+        .text-sm { font-size: 14px; } /* text-sm */
+        .font-bold { font-weight: 700; }
+        .font-semibold { font-weight: 600; }
+        .text-slate-800 { color: #1e293b; } /* slate-800 */
+        .text-slate-700 { color: #334155; } /* slate-700 */
+        .text-slate-500 { color: #64748b; } /* slate-500 */
+        .text-red-500 { color: #ef4444; } /* red-500 */
+        .text-red-800 { color: #991b1b; } /* red-800 */
+        .text-green-600 { color: #22c55e; } /* green-600 */
+        .text-green-800 { color: #166534; } /* green-800 */
+
+        input[type="text"] {
+            width: calc(100% - 24px); /* w-full - padding */
+            padding: 12px 16px; /* px-4 py-3 */
+            border: 1px solid #cbd5e1; /* border-slate-300 */
+            border-radius: 8px; /* rounded-lg */
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #6366f1; /* indigo-500 */
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5); /* ring-2 focus:ring-indigo-500 */
+        }
+
+        #candidates-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px; /* space-y-3 */
+        }
+        .candidate-label {
+            display: flex;
+            align-items: center;
+            padding: 16px; /* p-4 */
+            border: 1px solid #cbd5e1; /* border-slate-300 */
+            border-radius: 8px; /* rounded-lg */
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .candidate-label:has(input[type="radio"]:checked) {
+            background-color: #eef2ff; /* indigo-50 */
+            border-color: #6366f1; /* indigo-500 */
+        }
+
+        input[type="radio"] {
+            /* Custom radio button styles */
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #94a3b8; /* border-slate-400 */
+            border-radius: 50%;
+            background-color: #fff;
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0; /* Prevent squishing */
+        }
+        input[type="radio"]:checked {
+            background-color: #4f46e5; /* indigo-600 */
+            border-color: #4f46e5; /* indigo-600 */
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='3'/%3e%3c/svg%3e");
+            background-size: 60%;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        input[type="radio"]:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5); /* ring-2 focus:ring-indigo-500 */
+        }
+
+        .candidate-label span {
+            margin-left: 16px; /* ml-4 */
+        }
+
+        button {
+            width: 100%;
+            background-color: #4f46e5; /* indigo-600 */
+            color: white;
+            font-weight: 700;
+            padding: 12px 16px; /* py-3 px-4 */
+            border-radius: 8px; /* rounded-lg */
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        button:hover {
+            background-color: #4338ca; /* indigo-700 */
+        }
+        button:active {
+            transform: scale(0.95); /* active:scale-95 */
+        }
+        button:disabled {
+            background-color: #a5b4fc; /* indigo-300 */
+            cursor: not-allowed;
+        }
+
+        .hidden { display: none; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+
+        /* Spinner Styles */
+        #submit-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #submit-spinner svg {
+            animation: spin 1s linear infinite;
+            height: 20px;
+            width: 20px;
+            color: white;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Message Container Styles */
+        .message-box {
+            padding: 24px; /* p-6 */
+            border-radius: 8px; /* rounded-lg */
+            text-align: center;
+        }
+        .bg-green-100 { background-color: #dcfce7; }
+        .bg-red-100 { background-color: #fee2e2; }
+
+        .icon-container {
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            height: 48px;
+            width: 48px;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px; /* full circle */
+        }
+        .bg-green-200 { background-color: #bbf7d0; }
+        .bg-red-200 { background-color: #fecaca; }
+        .icon-container svg {
+            height: 24px;
+            width: 24px;
+        }
+        .text-green-600 { color: #22c55e; }
+        .text-red-600 { color: #dc2626; }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="container">
+        <div id="main-content">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-slate-800">Secure Election Portal</h1>
+                <p class="text-slate-500 mt-2">Enter your token to cast your vote.</p>
+            </div>
+
+            <form id="vote-form">
+                <div class="mb-6">
+                    <label for="token" class="block text-sm font-semibold text-slate-700 mb-2">Voting Token</label>
+                    <input type="text" id="token" name="token" placeholder="Enter your unique token" required>
+                </div>
+
+                <div id="candidates-container" class="mb-8">
+                    <p class="block text-sm font-semibold text-slate-700 mb-2">Select a Candidate</p>
+                    <div id="candidates-list">
+                        <div class="text-center text-slate-500 p-4">Loading candidates...</div>
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-button">
+                    <span id="submit-text">Submit Vote</span>
+                    <span id="submit-spinner" class="hidden">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" opacity="0.25"></circle>
+                            <path fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" opacity="0.75"></path>
+                        </svg>
+                    </span>
+                </button>
+            </form>
+        </div>
+
+        <div id="message-container" class="hidden text-center">
+            </div>
+
+    </div>
+
+    <script>
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbztzcyDURdNWO2UKBJOcP__YI7TxjW5WfA4MF6x3ZVPNFxJg_ttOm4HW5WvahYc2sha/exec'; // REPLACE WITH YOUR DEPLOYED WEB APP URL
+
+        const voteForm = document.getElementById('vote-form');
+        const candidatesList = document.getElementById('candidates-list');
+        const submitButton = document.getElementById('submit-button');
+        const submitText = document.getElementById('submit-text');
+        const submitSpinner = document.getElementById('submit-spinner');
+        const mainContent = document.getElementById('main-content');
+        const messageContainer = document.getElementById('message-container');
+
+        async function apiCall(action, payload = {}) {
+            const body = { action, ...payload };
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    redirect: 'follow',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(body)
+                });
+                const result = await response.json();
+                if (!result.success) {
+                    throw new Error(result.error || 'An unknown error occurred.');
+                }
+                return result.data;
+            } catch (error) {
+                console.error('API Call Error:', error);
+                throw error;
+            }
+        }
+
+        async function loadCandidates() {
+            try {
+                const candidates = await apiCall('get-candidates');
+                candidatesList.innerHTML = '';
+                if (candidates.length === 0) {
+                     candidatesList.innerHTML = `<p class="text-slate-500">No candidates have been configured for this election.</p>`;
+                     submitButton.disabled = true;
+                     return;
+                }
+                candidates.forEach(candidate => {
+                    const div = document.createElement('div');
+                    div.className = 'candidate-wrapper'; // Use a wrapper for custom styling
+                    div.innerHTML = `
+                        <label for="candidate-${candidate.id}" class="candidate-label">
+                            <input type="radio" id="candidate-${candidate.id}" name="candidate" value="${candidate.name}" required>
+                            <span>${candidate.name}</span>
+                        </label>
+                    `;
+                    candidatesList.appendChild(div);
+                });
+            } catch (error) {
+                displayMessage('error', 'Candidates Error', `Could not load candidates: ${error.message}. Please try again later.`);
+                mainContent.classList.add('hidden');
+                messageContainer.classList.remove('hidden');
+                submitButton.disabled = true;
+            }
+        }
+
+        async function handleVoteSubmit(event) {
+            event.preventDefault();
+            const token = document.getElementById('token').value.trim();
+            const selectedCandidate = document.querySelector('input[name="candidate"]:checked');
+
+            if (!token) {
+                displayMessage('error', 'Token Required', 'Please enter your voting token.');
+                return;
+            }
+            if (!selectedCandidate) {
+                 displayMessage('error', 'Selection Required', 'Please select a candidate before submitting.');
+                return;
+            }
+
+            setLoading(true);
+
+            try {
+                const result = await apiCall('record-vote', {
+                    token: token,
+                    candidate: selectedCandidate.value
+                });
+                displayMessage('success', 'Vote Submitted!', result.message);
+                mainContent.classList.add('hidden');
+                messageContainer.classList.remove('hidden');
+            } catch (error) {
+                displayMessage('error', 'Submission Failed', error.message);
+                mainContent.classList.add('hidden');
+                messageContainer.classList.remove('hidden');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function setLoading(isLoading) {
+            submitButton.disabled = isLoading;
+            if (isLoading) {
+                submitText.classList.add('hidden');
+                submitSpinner.classList.remove('hidden');
+            } else {
+                submitText.classList.remove('hidden');
+                submitSpinner.classList.add('hidden');
+            }
+        }
+
+        function displayMessage(type, title, text) {
+            const bgColorClass = type === 'success' ? 'bg-green-100' : 'bg-red-100';
+            const textColorClass = type === 'success' ? 'text-green-800' : 'text-red-800';
+            const iconBgClass = type === 'success' ? 'bg-green-200' : 'bg-red-200';
+            const iconColorClass = type === 'success' ? 'text-green-600' : 'text-red-600';
+
+            const icon = type === 'success' ?
+                `<div class="icon-container ${iconBgClass}"><svg class="${iconColorClass}" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg></div>` :
+                `<div class="icon-container ${iconBgClass}"><svg class="${iconColorClass}" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></div>`;
+
+            messageContainer.innerHTML = `
+                <div class="message-box ${bgColorClass} ${textColorClass}">
+                    ${icon}
+                    <h3 class="mt-4 text-2xl font-bold">${title}</h3>
+                    <p class="mt-2">${text}</p>
+                </div>
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadCandidates);
+        voteForm.addEventListener('submit', handleVoteSubmit);
+    </script>
+
+</body>
+</html>
