@@ -4,3 +4,6 @@ Admin app script  =
 
 
 https://script.google.com/macros/s/AKfycbztzcyDURdNWO2UKBJOcP__YI7TxjW5WfA4MF6x3ZVPNFxJg_ttOm4HW5WvahYc2sha/exec
+
+
+Facing Error in fetching the data from app script
